@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ComposeForge — Simple Docker Compose Generator</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="js/presets.js"></script>
+    <script defer src="js/yamlGenerator.js"></script>
+    <script defer src="js/app.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="13" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.8" />
+              <rect x="9" y="13" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.8" />
+              <rect x="16" y="13" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.8" />
+              <rect x="6" y="7" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.8" />
+              <rect x="13" y="7" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.8" />
+              <path d="M2 20h20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="brand-title">ComposeForge</h1>
+            <p class="brand-subtitle">Docker Compose YAML Generator</p>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="openStarterPacksBtn" type="button" class="btn btn-secondary">
+            Starter Packs
+          </button>
+          <div class="preset-picker">
+            <label for="stackPresetSelect" class="sr-only">Quick Load Starter Pack</label>
+            <select id="stackPresetSelect" class="select-control" aria-label="Quick Load Starter Pack">
+              <option value="">Quick Load Stack...</option>
+            </select>
+          </div>
+          <button
+            id="themeToggleBtn"
+            type="button"
+            class="btn btn-ghost"
+            title="Toggle light/dark theme"
+            aria-label="Toggle light or dark theme"
+          >
+            Light Mode
+          </button>
+          <button id="resetProjectBtn" type="button" class="btn btn-ghost btn-danger-text">
+            Reset
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <!-- LEFT PANE: VISUAL BUILDER -->
+      <section class="builder-pane" aria-label="Compose Builder">
+        <!-- Project Settings -->
+        <div class="card project-card">
+          <div class="card-header-compact">
+            <h2 class="section-title">Project Settings</h2>
+            <label class="checkbox-inline" title="Include deprecated version: '3.8' header for legacy Compose tools">
+              <input id="includeVersionInput" type="checkbox" />
+              <span>Legacy <code>version: "3.8"</code></span>
+            </label>
+          </div>
+          <div class="project-grid">
+            <div class="field">
+              <label for="projectNameInput">Project Name <span class="muted">(optional)</span></label>
+              <input
+                id="projectNameInput"
+                type="text"
+                placeholder="e.g. my-app"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+            <div class="field">
+              <label for="newNetworkInput">Project Networks</label>
+              <div class="network-manager">
+                <div id="projectNetworksList" class="chip-list"></div>
+                <form id="addNetworkForm" class="inline-add-form">
+                  <input
+                    id="newNetworkInput"
+                    type="text"
+                    placeholder="Add network..."
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <button type="submit" class="btn btn-secondary btn-sm">Add</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Add Service Templates -->
+        <div class="card templates-card">
+          <div class="card-header-compact">
+            <h2 class="section-title">Add Service</h2>
+            <div class="template-search-wrap">
+              <label for="templateSearchInput" class="sr-only">Search service templates</label>
+              <input
+                id="templateSearchInput"
+                type="text"
+                class="search-compact"
+                placeholder="Filter services..."
+                autocomplete="off"
+              />
+            </div>
+          </div>
+          <div id="templateCategoryFilter" class="filter-pills" role="tablist" aria-label="Service template categories"></div>
+          <div id="templateButtons" class="template-grid"></div>
+        </div>
+
+        <!-- Services Bar + Active Service Editor -->
+        <div class="card editor-card">
+          <div class="services-bar-wrapper">
+            <div id="servicesTabs" class="services-tabs" role="tablist" aria-label="Services"></div>
+          </div>
+
+          <div id="serviceEditorContainer" class="service-editor"></div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANE: LIVE PREVIEW & ACTIONS -->
+      <aside class="preview-pane" aria-label="Generated Output">
+        <div class="card preview-card">
+          <div class="preview-header">
+            <div class="output-tabs" role="tablist" aria-label="Output Files">
+              <button
+                type="button"
+                class="output-tab active"
+                data-output-tab="yaml"
+                role="tab"
+                aria-selected="true"
+              >
+                docker-compose.yml
+              </button>
+              <button
+                type="button"
+                class="output-tab"
+                data-output-tab="env"
+                role="tab"
+                aria-selected="false"
+              >
+                .env <span id="envCountBadge" class="badge">0</span>
+              </button>
+              <button
+                type="button"
+                class="output-tab"
+                data-output-tab="cli"
+                role="tab"
+                aria-selected="false"
+              >
+                Deploy Guide
+              </button>
+            </div>
+
+            <div class="output-actions">
+              <button id="copyOutputBtn" type="button" class="btn btn-secondary btn-sm">
+                Copy
+              </button>
+              <button id="downloadOutputBtn" type="button" class="btn btn-primary btn-sm">
+                Download
+              </button>
+            </div>
+          </div>
+
+          <div id="diagnosticsBar" class="diagnostics-bar" aria-live="polite"></div>
+
+          <div id="codeViewerContainer" class="code-viewer"></div>
+
+          <div id="cliGuideContainer" class="cli-guide hidden"></div>
+
+          <div class="preview-footer">
+            <div id="summaryStats" class="summary-stats"></div>
+            <button
+              id="downloadEnvBtn"
+              type="button"
+              class="btn btn-ghost btn-sm hidden"
+              title="Download .env file"
+            >
+              Download .env
+            </button>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Starter Packs Browser Modal -->
+    <div id="starterPacksModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="starterPacksTitle">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div>
+            <h2 id="starterPacksTitle" class="modal-title">Starter Pack Templates</h2>
+            <p class="modal-subtitle">Choose a pre-configured multi-service Docker Compose stack to get started fast.</p>
+          </div>
+          <button id="closeStarterPacksBtn" type="button" class="btn btn-ghost btn-sm" aria-label="Close starter packs">
+            Close
+          </button>
+        </div>
+        <div class="modal-controls">
+          <div id="starterCategoryFilter" class="filter-pills"></div>
+          <input
+            id="starterSearchInput"
+            type="text"
+            class="search-compact modal-search"
+            placeholder="Search starter packs (e.g. Laravel, Ollama, Kafka)..."
+            autocomplete="off"
+          />
+        </div>
+        <div id="starterPacksGrid" class="starter-packs-grid"></div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

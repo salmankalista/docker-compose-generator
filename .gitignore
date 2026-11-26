@@ -1,0 +1,31 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+
+# OS Files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors & IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs & Temp
+*.log
+tmp/
+temp/
+
+# Node / Tooling
+node_modules/
+.npm/
+coverage/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
