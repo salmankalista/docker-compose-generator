@@ -2,6 +2,20 @@
 
 A lightweight, zero-dependency web application built with vanilla HTML, CSS, and JavaScript to visually build and export clean `docker-compose.yml` and `.env` files.
 
+## Screenshots
+
+### Visual Service Builder & Live YAML Output (Dark Mode)
+![ComposeForge Visual Service Builder and Live YAML Preview](docs/screenshots/01-builder-dark.png)
+
+### Starter Packs Browser (20 Pre-Configured Stacks)
+![ComposeForge Starter Pack Templates Modal](docs/screenshots/02-starter-packs.png)
+
+### Dynamic Deploy Guide & Reverse Proxy Config
+![ComposeForge Dynamic Deploy Guide and Folder Layout](docs/screenshots/03-deploy-guide.png)
+
+### Light Mode & Multi-Backend Load Balancing Stack
+![ComposeForge Light Mode and Service Templates](docs/screenshots/04-light-mode.png)
+
 ## Features
 
 - **Quick-Add Service Templates (23 templates)**: Nginx, Caddy, Traefik, HAProxy, Node.js, Python/FastAPI, Go, PHP-FPM, PostgreSQL, MySQL, MariaDB, MongoDB, Redis, RabbitMQ, MinIO (S3), Qdrant, Ollama, Prometheus, Grafana, Adminer, pgAdmin 4, Mailpit, and Custom services with category & search filtering.
@@ -23,6 +37,7 @@ A lightweight, zero-dependency web application built with vanilla HTML, CSS, and
 - `code/styles.css` — Responsive styling (dark & light themes)
 - `code/js/` — Presets, YAML/Deploy Guide generator, and interactive state logic
 - `code/tests/` — Node unit tests
+- `docs/screenshots/` — Feature screenshots for documentation
 
 ## Run Locally
 
